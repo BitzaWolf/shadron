@@ -1,6 +1,3 @@
-#include <sphere>
-#include <affine_transform>
-
 #define PI 3.14
 #define HALF_PI 1.57
 
@@ -22,13 +19,15 @@ glsl vec4 _Fragment(vec2 fragPos)
             cos(xRotation + HALF_PI) * cos(yRotation)
     );
     vec3 ihat = cross(cameraDirection, jhat);
-            
+
+    float aspectRatio = 450.0 / 600.0;
     fragPos -= 0.5;
+    fragPos.y *= aspectRatio;
     vec3 viewDirection = cameraDirection + ihat * fragPos.x + jhat * fragPos.y;
     
     vec4 color = texture(_CubeMap, viewDirection);
     return color;
 }
 
-image _Output = glsl(_Fragment, ivec2(512, 512));
+image _Output = glsl(_Fragment, ivec2(600, 450));
 export tiff(_Output, "Cubemap.tif");
