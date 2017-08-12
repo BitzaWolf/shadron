@@ -1,34 +1,34 @@
 #include <sphere>
 #include <affine_transform>
 
-// Near/far values for projection (minimum and maximum draw distance)
-const float NEAR = 1.0/256.0, FAR = 256.0;
+#define PI 3.14
+#define HALF_PI 1.57
+
+parameter float yRotation = 0 : range(-3.14, 3.14);
+parameter float xRotation = 0 : range(-1.57, 1.57);
 
 cubemap _CubeMap = file("Sky.jpg");
 
-glsl struct _FragData
+glsl vec4 _Fragment(vec2 fragPos)
 {
-	vec3 normal;
-};
-
-glsl vec4 _Vertex(out _FragData fragmentData, int vertexIndex)
-{
-	vec3 vertex = sphereCoord<20, 20>(vertexIndex);
-    vertex = translate(vertex, vec3(0.0, 0.0, -10));
-	fragmentData.normal = sphereNormal<20, 20>(vertexIndex);
-
-    float fov = 0.5 * PI - atan(0.0625 * shadron_Mouse.z);
-    return projectPerspectiveHFOV(vertex, fov, NEAR, FAR);
+    vec3 cameraDirection = vec3(
+            sin(yRotation) * cos(xRotation),
+            sin(xRotation),
+            cos(yRotation) * cos(xRotation)
+    );
+    vec3 jhat = vec3(
+            cos(xRotation + HALF_PI) * sin(yRotation),
+            sin(xRotation + HALF_PI),
+            cos(xRotation + HALF_PI) * cos(yRotation)
+    );
+    vec3 ihat = cross(cameraDirection, jhat);
+            
+    fragPos -= 0.5;
+    vec3 viewDirection = cameraDirection + ihat * fragPos.x + jhat * fragPos.y;
+    
+    vec4 color = texture(_CubeMap, viewDirection);
+    return color;
 }
 
-glsl vec4 _Fragment(in _FragData fragmentData)
-{
-    vec4 color = texture(_CubeMap, fragmentData.normal);
-	return color;
-}
-
-model _Output :
-	fragment_data(_FragData),
-	vertex(_Vertex, SPHERE_PRIMITIVES, SPHERE_VERTEX_COUNT(20, 20)),
-	fragment(_Fragment),
-	multisample(4);
+image _Output = glsl(_Fragment, ivec2(512, 512));
+export tiff(_Output, "Cubemap.tif");
