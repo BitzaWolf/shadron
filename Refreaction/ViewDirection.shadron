@@ -1,0 +1,25 @@
+#define PI 3.14
+#define HALF_PI 1.57
+
+parameter float cameraYRotation = 0 : range(-3.14, 3.14);
+parameter float cameraXRotation = 0 : range(-1.57, 1.57);
+
+glsl vec3 GetViewDirection(vec2 fragPos)
+{
+    vec3 cameraDirection = vec3(
+            sin(cameraYRotation) * cos(cameraXRotation),
+            sin(cameraXRotation),
+            cos(cameraYRotation) * cos(cameraXRotation)
+    );
+    vec3 jhat = vec3(
+            cos(cameraXRotation + HALF_PI) * sin(cameraYRotation),
+            sin(cameraXRotation + HALF_PI),
+            cos(cameraXRotation + HALF_PI) * cos(cameraYRotation)
+    );
+    vec3 ihat = cross(cameraDirection, jhat);
+
+    float aspectRatio = 450.0 / 600.0;
+    fragPos -= 0.5;
+    fragPos.y *= aspectRatio;
+    return cameraDirection + ihat * fragPos.x + jhat * fragPos.y;
+}
