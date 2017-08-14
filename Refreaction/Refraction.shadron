@@ -16,20 +16,20 @@ cubemap _Cubemap = file("Mountain.png");
 
 glsl struct _FragData
 {
-	vec3 norm;
+    vec3 norm;
 };
 
 
 glsl vec4 _ModelVertex(out _FragData fragmentData, int vertexIndex)
 {
-	vec3 normal = WOLF_MODEL_Normal(vertexIndex);
-	normal = rotateX(normal, PI - wolfXRotation);
-	normal = rotateY(normal, wolfYRotation);
-	fragmentData.norm = normal;
+    vec3 normal = WOLF_MODEL_Normal(vertexIndex);
+    normal = rotateX(normal, PI - wolfXRotation);
+    normal = rotateY(normal, wolfYRotation);
+    fragmentData.norm = normal;
 
-	vec3 vertex = WOLF_MODEL_Coord(vertexIndex);
-	vertex = rotateX(vertex, PI - wolfXRotation);
-	vertex = rotateY(vertex, wolfYRotation);
+    vec3 vertex = WOLF_MODEL_Coord(vertexIndex);
+    vertex = rotateX(vertex, PI - wolfXRotation);
+    vertex = rotateY(vertex, wolfYRotation);
     vertex = translate(vertex, vec3(wolfXPosition, wolfYPosition, wolfZPosition));
 
     float fov = 0.5 * PI - atan(0.0625 * shadron_Mouse.z);
@@ -39,22 +39,22 @@ glsl vec4 _ModelVertex(out _FragData fragmentData, int vertexIndex)
 glsl vec4 _ModelFragment(in _FragData fragmentData)
 {
     vec4 color = vec4(fragmentData.norm, 1);
-	return color;
+    return color;
 }
 
 model image _Wolf :
-	fragment_data(_FragData),
-	vertex(_ModelVertex, WOLF_MODEL_PRIMITIVES, WOLF_MODEL_VERTEX_COUNT),
-	fragment(_ModelFragment),
-	multisample(4),
-	dimensions(512, 512);
+    fragment_data(_FragData),
+    vertex(_ModelVertex, WOLF_MODEL_PRIMITIVES, WOLF_MODEL_VERTEX_COUNT),
+    fragment(_ModelFragment),
+    multisample(4),
+    dimensions(512, 512);
 
 glsl vec4 _ImageFragment(vec2 fragPos)
 {
-	vec4 wolfNorm = texture(_Wolf, fragPos);
-	vec3 viewDirection = GetViewDirection(fragPos);
-	if (wolfNorm.w != 0)
-	{
+    vec4 wolfNorm = texture(_Wolf, fragPos);
+    vec3 viewDirection = GetViewDirection(fragPos);
+    if (wolfNorm.w != 0)
+    {
         viewDirection = refract(viewDirection, wolfNorm.xyz, ratioOfInfraction);
     }
     
