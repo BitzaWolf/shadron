@@ -9,7 +9,7 @@ parameter float wolfXRotation = 0 : range(-3.14, 3.14);
 parameter float wolfYRotation = 0 : range(-3.14, 3.14);
 parameter float wolfXPosition = 0 : range(-10, 10);
 parameter float wolfYPosition = 0 : range(-10, 10);
-parameter float wolfZPosition = 0 : range(-10, 10);
+parameter float wolfZPosition = -10 : range(-20, 0);
 
 // Image from http://www.humus.name/index.php?page=Textures&ID=78
 cubemap _Cubemap = file("Mountain.png");
