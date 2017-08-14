@@ -7,6 +7,9 @@ const float NEAR = 1.0/256.0, FAR = 256.0;
 parameter float ratioOfInfraction = 0.76 : range(0.1, 3);
 parameter float wolfXRotation = 0 : range(-3.14, 3.14);
 parameter float wolfYRotation = 0 : range(-3.14, 3.14);
+parameter float wolfXPosition = 0 : range(-10, 10);
+parameter float wolfYPosition = 0 : range(-10, 10);
+parameter float wolfZPosition = 0 : range(-10, 10);
 
 // Image from http://www.humus.name/index.php?page=Textures&ID=78
 cubemap _Cubemap = file("Mountain.png");
@@ -20,14 +23,14 @@ glsl struct _FragData
 glsl vec4 _ModelVertex(out _FragData fragmentData, int vertexIndex)
 {
 	vec3 normal = WOLF_MODEL_Normal(vertexIndex);
-	normal = rotateX(normal, PI - wolfXRotation * PI);
-	normal = rotateY(normal, wolfYRotation * 2 * PI);
+	normal = rotateX(normal, PI - wolfXRotation);
+	normal = rotateY(normal, wolfYRotation);
 	fragmentData.norm = normal;
 
 	vec3 vertex = WOLF_MODEL_Coord(vertexIndex);
-	vertex = rotateX(vertex, PI - wolfXRotation * PI);
-	vertex = rotateY(vertex, wolfYRotation * 2 * PI);
-    vertex = translate(vertex, vec3(0, 0, -10));
+	vertex = rotateX(vertex, PI - wolfXRotation);
+	vertex = rotateY(vertex, wolfYRotation);
+    vertex = translate(vertex, vec3(wolfXPosition, wolfYPosition, wolfZPosition));
 
     float fov = 0.5 * PI - atan(0.0625 * shadron_Mouse.z);
     return projectPerspectiveHFOV(vertex, fov, NEAR, FAR);
@@ -59,4 +62,4 @@ glsl vec4 _ImageFragment(vec2 fragPos)
 }
 
 image _Output = glsl(_ImageFragment, sizeof(_Wolf));
-	
+export tiff(_Output, "Refraction Example.tif");
