@@ -1,1 +1,1 @@
-![Glass Wolf](https://github.com/BitzaWolf/Shadron/blob/master/Refraction/GlassWolf.gif)
+![Glass Wolf](https://github.com/BitzaWolf/shadron/blob/master/Refreaction/GlassWolf.gif)
